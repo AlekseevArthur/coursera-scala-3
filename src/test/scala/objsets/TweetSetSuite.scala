@@ -5,11 +5,14 @@ class TweetSetSuite extends munit.FunSuite:
     val set1 = Empty()
     val set2 = set1.incl(Tweet("a", "a body", 20))
     val set3 = set2.incl(Tweet("b", "b body", 20))
+    val set4u = set2.incl(Tweet("u", "u body", 30))
     val c = Tweet("c", "c body", 7)
     val d = Tweet("d", "d body", 9)
     val set4c = set3.incl(c)
     val set4d = set3.incl(d)
     val set5 = set4c.incl(d)
+    val set6 = set5.union(set4u)
+    val set7 = set6.incl(Tweet("0", "0 body", 40))
 
   def asSet(tweets: TweetSet): Set[Tweet] =
     var res = Set[Tweet]()
@@ -48,6 +51,17 @@ class TweetSetSuite extends munit.FunSuite:
       assertEquals(size(set1.union(set5)), 4)
   }
 
+  test("union: set4 with set5") {
+    new TestSets:
+      assertEquals(size(set6), 5)
+  }
+
+  test("Most retweeted is completed") {
+    new TestSets:
+      assertEquals(set6.mostRetweeted.retweets, 30)
+      assertEquals(set7.mostRetweeted.retweets, 40)
+  }
+
   test("descending: set5") {
     new TestSets:
       val trends = set5.descendingByRetweet
@@ -55,6 +69,11 @@ class TweetSetSuite extends munit.FunSuite:
       assert(trends.head.user == "a" || trends.head.user == "b")
   }
 
+  test("GoogleVsApple is completed") {
+    new TestSets:
+      GoogleVsApple.trending
+      assert(true)
+  }
 
   import scala.concurrent.duration.*
   override val munitTimeout = 10.seconds
